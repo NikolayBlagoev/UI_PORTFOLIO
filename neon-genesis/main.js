@@ -34,11 +34,13 @@ var ctx = canvas.getContext("2d");
 
 var counter = 0;
 var frame = 0;
-ctx.font = "200px Impact";
+let fnt_size = 200+Math.floor((canvas.width-1920)/10);
+ctx.font = fnt_size+"px Impact";
 var colour = colours[counter%colours.length].map((x) => x);
 var frntclr = front_col[counter%front_col.length].map((x) => x);
 var change = [0,0,0];
 var mouseX = 0;
+var ball_size = 20+Math.floor((canvas.width-1920)/100);
 var mouseY = 0;
 function update(e){
     mouseX =e.clientX;
@@ -49,7 +51,7 @@ async function change_canvas(){
     
     while(true){
         if(frame == 0){
-            console.log("change "+counter)
+            // console.log("change "+counter)
             // to_change = colours[counter]
             // colour[0]= to_change[0]
             // colour[1]= to_change[1]
@@ -70,7 +72,7 @@ async function change_canvas(){
         
         for(const ball of balls){
             ctx.beginPath();
-            ctx.arc(ball[0], ball[1], 20-20*Math.exp(-(245-ball[6])/40), 0, Math.PI*2);
+            ctx.arc(ball[0], ball[1], Math.max(1,ball_size-ball_size*Math.exp(-(245-ball[6])/40)), 0, Math.PI*2);
             // console.log(20-20*Math.exp(-(500-ball[6])/140))
             ctx.fill();
             ctx.closePath();
@@ -83,7 +85,7 @@ async function change_canvas(){
             
         }
         ctx.beginPath();
-        ctx.arc(mouseX, mouseY, 20, 0, Math.PI*2);
+        ctx.arc(mouseX, mouseY, ball_size, 0, Math.PI*2);
             // console.log(20-20*Math.exp(-(500-ball[6])/140))
         ctx.fill();
         ctx.closePath();
@@ -113,7 +115,7 @@ async function change_canvas(){
         frntclr[2]=c1*front_col[(counter)%front_col.length][2]+(1-c1)*front_col[(counter+1)%front_col.length][2];
         if (frame%10==0){
             var angle = Math.random()*Math.PI/2 - Math.PI/4;
-            console.log(angle)
+            // console.log(angle)
             balls.push([mouseX,mouseY,2*Math.sin(angle),-3*Math.cos(angle),0.001*Math.sin(angle),0.01,0])
         }
         
@@ -125,5 +127,12 @@ async function change_canvas(){
         await sleep(10);
     }
 }
-
+window.onresize = ()=>{
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let fnt_size = 200+Math.floor((canvas.width-1920)/10);
+    console.log(fnt_size)
+    ball_size = 20+Math.floor((canvas.width-1920)/100);
+    ctx.font = fnt_size+"px Impact";
+};
 change_canvas()
